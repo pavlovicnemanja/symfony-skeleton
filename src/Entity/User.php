@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ORM\Table(name="`np_user`")
+ * @ORM\Table(name="np_user")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -19,49 +19,56 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"show", "list"})
+     * @Groups({"list_view", "single_view"})
      */
     private $id;
 
     /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Company")
+     * @ORM\JoinColumn(name="company", referencedColumnName="id")
+     * @Groups({"single_view"})
+     */
+    private $company;
+
+    /**
      * @ORM\Column(type="string", length=180)
-     * @Groups({"show", "list"})
+     * @Groups({"list_view", "single_view"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=180)
-     * @Groups({"show", "list"})
+     * @Groups({"list_view", "single_view"})
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=180, nullable=true)
-     * @Groups({"show"})
+     * @Groups({"single_view"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=180, nullable=true)
-     * @Groups({"show"})
+     * @Groups({"single_view"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"show", "list"})
+     * @Groups({"list_view", "single_view"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"show"})
+     * @Groups({"single_view"})
      */
     private $roles = [];
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"show"})
+     * @Groups({"list_view", "single_view"})
      */
     private $created;
 
@@ -72,8 +79,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
+     * @ORM\Column(type="string", length=128, nullable=true)
+     */
+    private $token;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $tokenExpiresAt;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"single_view"})
+     */
+    private $settings = [];
+
+    /**
      * @ORM\Column(type="boolean")
-     * @Groups({"show"})
+     * @Groups({"list_view", "single_view"})
      */
     private $active;
 
@@ -241,6 +264,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreated(\DateTimeInterface $created): self
     {
         $this->created = $created;
+
+        return $this;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getTokenExpiresAt(): ?\DateTimeInterface
+    {
+        return $this->tokenExpiresAt;
+    }
+
+    public function setTokenExpiresAt(?\DateTimeInterface $tokenExpiresAt): self
+    {
+        $this->tokenExpiresAt = $tokenExpiresAt;
+
+        return $this;
+    }
+
+    public function getSettings(): ?array
+    {
+        return $this->settings;
+    }
+
+    public function setSettings(?array $settings): self
+    {
+        $this->settings = $settings;
 
         return $this;
     }

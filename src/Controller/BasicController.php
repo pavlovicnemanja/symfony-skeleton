@@ -24,9 +24,20 @@ class BasicController extends AbstractController
         return $view;
     }
 
+    public function getAll($class)
+    {
+        $view = $this->getDoctrine()
+            ->getRepository($class)
+            ->findAll();
+
+        return $view;
+    }
+
     public function handleView($data): Response
     {
-        $serialize = $this->serializer->serialize($data, 'json', ['groups' => 'show']);
+        $group = is_array($data) ? 'list_view' : 'single_view';
+
+        $serialize = $this->serializer->serialize($data, 'json', ['groups' => $group]);
     
         return new Response(
             $serialize,
